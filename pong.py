@@ -1,10 +1,15 @@
 import turtle
+import winsound
 
 game_window = turtle.Screen()
 game_window.title("Pong by Oleg Tielushko")
 game_window.bgcolor("black")
 game_window.setup(height=600, width=800)
 game_window.tracer(0)
+
+#Score
+score_a = 0
+score_b = 0
 
 #Main game loop
 
@@ -33,9 +38,17 @@ ball.shape("square")
 ball.color("white")
 ball.penup()
 ball.goto(0,0)
-ball.dx = 0.15 #ball speed over x axis - delta x
-ball.dy = 0.15
+ball.dx = 0.25 #ball speed over x axis - delta x
+ball.dy = 0.25
 
+# Pen - for drawing the score
+pen = turtle.Turtle()
+pen.speed(0)
+pen.color("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(0,260)
+pen.write("Player A: 0   Player B: 0", align="center", font=("Courier", 24, "normal"))
 
 #Game functions
 
@@ -83,27 +96,40 @@ while True:
     if ball.ycor() > 290:
         ball.sety(290)
         ball.dy *= -1
+        winsound.PlaySound("jumping.wav", winsound.SND_ASYNC)
 
     #bottom of the screen
     if ball.ycor() < -290:
         ball.sety(-290)
         ball.dy *= -1
+        winsound.PlaySound("jumping.wav", winsound.SND_ASYNC)
 
     #right of the screen - out of bounds, reset to 0,0 and reverse direction
     if ball.xcor() > 390:
+        winsound.PlaySound("explosion.wav", winsound.SND_ASYNC)
         ball.goto(0,0)
         ball.dx *= -1
+        score_a += 1
+        pen.clear()
+        pen.write(f"Player A: {score_a}   Player B: {score_b}", align="center", font=("Courier", 24, "normal"))
 
     #left of the screen - out of bounds, reset to 0,0 and reverse direction
     if ball.xcor() < -390:
+        winsound.PlaySound("explosion.wav", winsound.SND_ASYNC)
         ball.goto(0,0)
         ball.dx *= -1
+        score_b += 1
+        pen.clear()
+        pen.write(f"Player A: {score_a}   Player B: {score_b}", align="center", font=("Courier", 24, "normal"))
+
 
     #paddle and ball collisions - right paddle
     if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_B.ycor() + 40 and ball.ycor() > paddle_B.ycor() - 40):
+        winsound.PlaySound("jumping.wav", winsound.SND_ASYNC)
         ball.setx(340)
         ball.dx *= -1
 
     if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_A.ycor() + 40 and ball.ycor() > paddle_A.ycor() - 40):
+        winsound.PlaySound("jumping.wav", winsound.SND_ASYNC)
         ball.setx(-340)
         ball.dx *= -1
